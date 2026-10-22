@@ -136,12 +136,6 @@
             background: rgba(255, 255, 255, 0.4);
         }
 
-        .hint-text {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.5);
-            margin-bottom: 10px;
-        }
-
         /* 2. 메인 홈 화면 (Home Screen) */
         .home-screen {
             position: absolute;
@@ -224,8 +218,10 @@
                     <button class="key-btn" onclick="pressKey('0')">0</button>
                     <div></div>
                 </div>
-
-                           </div>
+                
+                <!-- 여백 유지를 위한 빈 공간 -->
+                <div></div>
+            </div>
 
             <!-- 2. 메인 홈 화면 -->
             <div class="home-screen">
@@ -245,7 +241,7 @@
     </div>
 
     <script>
-        // 설정할 비밀번호 (원하는 4자리 숫자)
+        // 설정할 비밀번호 (0511)
         const CORRECT_PIN = "0511";
         let currentPin = "";
 

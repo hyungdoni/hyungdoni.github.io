@@ -1,3 +1,4 @@
+HTML
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -12,7 +13,8 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            font-family: 'Apple SD Gothic Neo', sans-serif;
+            font-family: 'Apple SD Gothic Neo', -apple-system, sans-serif;
+            user-select: none;
         }
 
         .iphone-frame {
@@ -29,12 +31,10 @@
         .iphone-screen {
             width: 100%;
             height: 100%;
-            background-color: #ffffff;
             border-radius: 32px;
-            overflow-y: auto;
+            overflow: hidden;
             position: relative;
-            padding: 20px;
-            box-sizing: border-box;
+            background-color: #000;
         }
 
         .iphone-notch {
@@ -47,18 +47,124 @@
             background-color: #000;
             border-bottom-left-radius: 14px;
             border-bottom-right-radius: 14px;
+            z-index: 100;
+        }
+
+        /* 1. 잠금 화면 (Lock Screen) */
+        .lock-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 50px 20px 30px;
+            box-sizing: border-box;
+            z-index: 20;
+            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+        }
+
+        .lock-screen.unlocked {
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .lock-header {
+            text-align: center;
+        }
+
+        .lock-title {
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .dots-container {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            box-sizing: border-box;
+            transition: background-color 0.2s;
+        }
+
+        .dot.filled {
+            background-color: #fff;
+        }
+
+        /* 키패드 */
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px 20px;
+            width: 100%;
+            max-width: 220px;
+            margin-bottom: 20px;
+        }
+
+        .key-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: none;
+            color: #fff;
+            font-size: 22px;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 0 auto;
+            transition: background 0.15s;
+        }
+
+        .key-btn:active {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .hint-text {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 10px;
+        }
+
+        /* 2. 메인 홈 화면 (Home Screen) */
+        .home-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            padding: 50px 20px 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
             z-index: 10;
         }
 
         .content {
-            margin-top: 40px;
             text-align: center;
         }
 
         h2 {
-            color: #333;
+            color: #1c1c1e;
             font-size: 20px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         p {
@@ -68,12 +174,21 @@
         }
 
         .card {
-            background-color: #f8f9fa;
+            background-color: #f2f2f7;
             border-radius: 16px;
             padding: 15px;
             margin-top: 15px;
             text-align: left;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        /* 틀렸을 때 흔들리는 애니메이션 */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+        .shake {
+            animation: shake 0.4s ease-in-out;
         }
     </style>
 </head>
@@ -81,18 +196,100 @@
 
     <div class="iphone-frame">
         <div class="iphone-notch"></div>
+        
         <div class="iphone-screen">
-            <div class="content">
-                <h2>안녕하세요! 👋</h2>
-                <p>깃허브로 만든 나만의 아이폰 웹사이트입니다.</p>
+            <!-- 1. 잠금화면 -->
+            <div class="lock-screen" id="lockScreen">
+                <div class="lock-header">
+                    <div class="lock-title">암호 입력</div>
+                    <div class="dots-container" id="dotsContainer">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
 
-                <div class="card">
-                    <strong>💡 작가의 공간</strong>
-                    <p style="margin: 5px 0 0 0; font-size: 13px;">이곳에 소설 소개, 링크, 사진 등을 자유롭게 채워 넣을 수 있어요!</p>
+                <!-- 키패드 -->
+                <div class="keypad">
+                    <button class="key-btn" onclick="pressKey('1')">1</button>
+                    <button class="key-btn" onclick="pressKey('2')">2</button>
+                    <button class="key-btn" onclick="pressKey('3')">3</button>
+                    <button class="key-btn" onclick="pressKey('4')">4</button>
+                    <button class="key-btn" onclick="pressKey('5')">5</button>
+                    <button class="key-btn" onclick="pressKey('6')">6</button>
+                    <button class="key-btn" onclick="pressKey('7')">7</button>
+                    <button class="key-btn" onclick="pressKey('8')">8</button>
+                    <button class="key-btn" onclick="pressKey('9')">9</button>
+                    <div></div>
+                    <button class="key-btn" onclick="pressKey('0')">0</button>
+                    <div></div>
+                </div>
+
+                <!-- 힌트 안내문 -->
+                <div class="hint-text">💡 비밀번호 4자리를 입력해보세요! (기본: 1234)</div>
+            </div>
+
+            <!-- 2. 메인 홈 화면 -->
+            <div class="home-screen">
+                <div class="content">
+                    <h2>잠금 해제 성공! 🎉</h2>
+                    <p>작가님의 공간에 오신 것을 환영합니다.</p>
+
+                    <div class="card">
+                        <strong>📖 비밀 메세지</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 13px; color: #444;">
+                            이곳에 소설 스포일러, 캐릭터 소개, 링크 등을 꾸며 넣어보세요!
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <script>
+        // 설정할 비밀번호 (원하는 4자리 숫자)
+        const CORRECT_PIN = "0511";
+        let currentPin = "";
+
+        function pressKey(num) {
+            if (currentPin.length < 4) {
+                currentPin += num;
+                updateDots();
+
+                if (currentPin.length === 4) {
+                    setTimeout(checkPin, 150);
+                }
+            }
+        }
+
+        function updateDots() {
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach((dot, index) => {
+                if (index < currentPin.length) {
+                    dot.classList.add('filled');
+                } else {
+                    dot.classList.remove('filled');
+                }
+            });
+        }
+
+        function checkPin() {
+            if (currentPin === CORRECT_PIN) {
+                // 비밀번호 맞았을 때: 잠금화면 위로 슬라이드
+                document.getElementById('lockScreen').classList.add('unlocked');
+            } else {
+                // 틀렸을 때: 흔들림 효과 + 초기화
+                const lockScreen = document.getElementById('lockScreen');
+                lockScreen.classList.add('shake');
+                
+                setTimeout(() => {
+                    lockScreen.classList.remove('shake');
+                    currentPin = "";
+                    updateDots();
+                }, 400);
+            }
+        }
+    </script>
 </body>
 </html>

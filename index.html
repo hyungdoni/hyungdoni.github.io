@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나만의 아이폰 페이지</title>
+    <style>
+        body {
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Apple SD Gothic Neo', sans-serif;
+        }
+
+        .iphone-frame {
+            width: 320px;
+            height: 650px;
+            background-color: #000;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            padding: 12px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .iphone-screen {
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            border-radius: 32px;
+            overflow-y: auto;
+            position: relative;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .iphone-notch {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 25px;
+            background-color: #000;
+            border-bottom-left-radius: 14px;
+            border-bottom-right-radius: 14px;
+            z-index: 10;
+        }
+
+        .content {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .card {
+            background-color: #f8f9fa;
+            border-radius: 16px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: left;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="iphone-frame">
+        <div class="iphone-notch"></div>
+        <div class="iphone-screen">
+            <div class="content">
+                <h2>안녕하세요! 👋</h2>
+                <p>깃허브로 만든 나만의 아이폰 웹사이트입니다.</p>
+
+                <div class="card">
+                    <strong>💡 작가의 공간</strong>
+                    <p style="margin: 5px 0 0 0; font-size: 13px;">이곳에 소설 소개, 링크, 사진 등을 자유롭게 채워 넣을 수 있어요!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
